@@ -17,17 +17,19 @@ import physics.Vect;
 
 public class PathPlanner extends JPanel {
 
+    private final static double SCALING_FACTOR = 180; // for drawing the field
+    
     private final static double ROBOT_RADIUS = 0.2;
     private final static double ROBOT_VELOCITY = 1; // 1 meter per second
-    private final static double GRID_STEP_SIZE = 0.1; // 0.1 meter
+    private final static double GRID_STEP_SIZE = 0.2; // 0.1 meter
 
     private final static double FIELD_LENGTH = 6;
     private final static double FIELD_WIDTH = 4;
 
-    private final static double SCALING_FACTOR = 300; // for drawing the field
 
     public final List<ConstVelocityObstacle> obstacles;
     public final List<ConstVelocityObstacle> robots;
+    public List<Node> path;
 
     public static void main(String[] args) {
 
@@ -42,10 +44,10 @@ public class PathPlanner extends JPanel {
         pp.obstacles.add(new ConstVelocityObstacle(new Vect(6, 2.9), new Vect(-0.5, 0), ROBOT_RADIUS));
         pp.obstacles.add(new ConstVelocityObstacle(new Vect(0, 1), new Vect(0.78, 0), ROBOT_RADIUS));
 
-        List<Node> path = pp.getPath(new Vect(0, 4), new Vect(6, 0), ROBOT_RADIUS);
+        List<Node> path = pp.getPath(new Vect(0, 3.8), new Vect(6, 0), ROBOT_RADIUS);
         
         frame.add(pp);
-        frame.setSize(1820, 1260);
+        frame.setSize((int)(1800. / 300 * SCALING_FACTOR), (int)(1400. / 300 * SCALING_FACTOR));
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pp.run(path, ROBOT_RADIUS);
@@ -61,6 +63,7 @@ public class PathPlanner extends JPanel {
     public PathPlanner() {
         obstacles = new ArrayList<ConstVelocityObstacle>();
         robots = new ArrayList<ConstVelocityObstacle>();
+        path = new ArrayList<Node>();
     }
 
     public List<Node> getPath(Vect start, Vect goal, double robotRadius) {        
@@ -187,6 +190,7 @@ public class PathPlanner extends JPanel {
     public void run(List<Node> path, double robotRadius) {
         double time = 0;
         double TIMESTEP = 0.01;
+        this.path = path;
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e1) {
@@ -256,6 +260,14 @@ public class PathPlanner extends JPanel {
             g.setColor(Color.LIGHT_GRAY);
             g2d.fillOval((int)((obs.position.x()-obs.radius)*SCALING_FACTOR)+offset, (int)((obs.position.y()-obs.radius)*SCALING_FACTOR)+offset, 
                     (int)(2*obs.radius*SCALING_FACTOR), (int)(2*obs.radius*SCALING_FACTOR));
+        }
+        
+        for (int i = 0; i < path.size() - 1; i++) {
+            g.setColor(Color.blue);
+            g2d.drawLine((int)(path.get(i).position.x()*SCALING_FACTOR)+offset, 
+                    (int)(path.get(i).position.y()*SCALING_FACTOR)+offset, 
+                    (int)(path.get(i+1).position.x()*SCALING_FACTOR)+offset, 
+                    (int)(path.get(i+1).position.y()*SCALING_FACTOR)+offset); 
         }
     }
 }
