@@ -17,19 +17,17 @@ import physics.Vect;
 
 public class PathPlanner extends JPanel {
 
-    private final static double SCALING_FACTOR = 180; // for drawing the field
+    private final static double SCALING_FACTOR = 300; // for drawing the field
     
     private final static double ROBOT_RADIUS = 0.2;
     private final static double ROBOT_VELOCITY = 1; // 1 meter per second
-    private final static double GRID_STEP_SIZE = 0.2; // 0.1 meter
+    private final static double GRID_STEP_SIZE = 0.1; // 0.1 meter
 
     private final static double FIELD_LENGTH = 6;
     private final static double FIELD_WIDTH = 4;
 
 
     public final List<ConstVelocityObstacle> obstacles;
-    public final List<ConstVelocityObstacle> robots;
-    public List<Node> path;
 
     public static void main(String[] args) {
 
@@ -43,6 +41,7 @@ public class PathPlanner extends JPanel {
         pp.obstacles.add(new ConstVelocityObstacle(new Vect(6, 2.5), new Vect(-0.75, 0), ROBOT_RADIUS));
         pp.obstacles.add(new ConstVelocityObstacle(new Vect(6, 2.9), new Vect(-0.5, 0), ROBOT_RADIUS));
         pp.obstacles.add(new ConstVelocityObstacle(new Vect(0, 1), new Vect(0.78, 0), ROBOT_RADIUS));
+        pp.obstacles.add(new ConstVelocityObstacle(new Vect(3.5, 2.7), new Vect(0, 0), ROBOT_RADIUS));
 
         List<Node> path = pp.getPath(new Vect(0, 3.8), new Vect(6, 0), ROBOT_RADIUS);
         
@@ -187,6 +186,9 @@ public class PathPlanner extends JPanel {
      * ===================================================================================
      */
     
+    public final List<ConstVelocityObstacle> robots;
+    public List<Node> path;
+    
     public void run(List<Node> path, double robotRadius) {
         double time = 0;
         double TIMESTEP = 0.01;
@@ -246,10 +248,10 @@ public class PathPlanner extends JPanel {
         int offset = 20;
 
         // Grid
-//        for (double x = 0; x <= FIELD_LENGTH; x += GRID_STEP_SIZE)
-//            for (double y = 0; y <= FIELD_WIDTH; y += GRID_STEP_SIZE)
+//        for (double x = 0; x <= FIELD_LENGTH+0.01; x += GRID_STEP_SIZE)
+//            for (double y = 0; y <= FIELD_WIDTH+0.01; y += GRID_STEP_SIZE)
 //                g2d.fillOval((int)(x*SCALING_FACTOR)+offset, (int)(y*SCALING_FACTOR)+offset, 5, 5);
-//        
+////        
         for (ConstVelocityObstacle obs : obstacles) {
             g.setColor(Color.DARK_GRAY);
             g2d.fillOval((int)((obs.position.x()-obs.radius)*SCALING_FACTOR)+offset, (int)((obs.position.y()-obs.radius)*SCALING_FACTOR)+offset, 
