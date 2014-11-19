@@ -1,3 +1,4 @@
+package DynamicAStar;
 import physics.Vect;
 
 
@@ -16,7 +17,7 @@ public class Node {
     
     @Override
     public boolean equals(Object other) {
-        double EPS = 0.001;
+        double EPS = 0.005;
         if (!(other instanceof Node))
             return false;
         Node otherNode = (Node)other;
