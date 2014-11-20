@@ -30,7 +30,7 @@ public class Node {
     
     @Override
     public int hashCode() {
-        return (int)(23 * position.x()) + (int)(31 * position.y());
+        return (int)(1543 * position.x()) + (int)(3079 * position.y());
     }
     
     @Override

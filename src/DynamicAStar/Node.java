@@ -31,7 +31,7 @@ public class Node {
     
     @Override
     public int hashCode() {
-        return (int)(23 * position.x()) + (int)(31 * position.y());
+        return (int)(769 * position.x()) + (int)(31 * position.y());
     }
     
     @Override

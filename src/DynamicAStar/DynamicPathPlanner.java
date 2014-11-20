@@ -22,7 +22,7 @@ public class DynamicPathPlanner extends JPanel {
 
     private final static double ROBOT_RADIUS = 0.2;
     private final static double ROBOT_VELOCITY = 1; // 1 meter per second
-    private final static double GRID_STEP_SIZE = 0.15; // 0.1 meter
+    private final static double GRID_STEP_SIZE = 0.1; // 0.1 meter
 
     private final static double FIELD_LENGTH = 6;
     private final static double FIELD_WIDTH = 4;
@@ -41,26 +41,38 @@ public class DynamicPathPlanner extends JPanel {
 
         DynamicPathPlanner pp = new DynamicPathPlanner();
 
-        pp.obstacles.add(new RandomObstacle(new Vect(1, 1), ROBOT_RADIUS));
-        pp.obstacles.add(new RandomObstacle(new Vect(3, 1), ROBOT_RADIUS));
-        pp.obstacles.add(new RandomObstacle(new Vect(5, 1), ROBOT_RADIUS));
-        pp.obstacles.add(new RandomObstacle(new Vect(2, 2), ROBOT_RADIUS));
-        pp.obstacles.add(new RandomObstacle(new Vect(4, 2), ROBOT_RADIUS));
-        pp.obstacles.add(new RandomObstacle(new Vect(3, 3), ROBOT_RADIUS));
-        pp.obstacles.add(new RandomObstacle(new Vect(5, 3), ROBOT_RADIUS));
+        //        pp.obstacles.add(new RandomObstacle(new Vect(1, 1), ROBOT_RADIUS));
+        //        pp.obstacles.add(new RandomObstacle(new Vect(3, 1), ROBOT_RADIUS));
+        //        pp.obstacles.add(new RandomObstacle(new Vect(5, 1), ROBOT_RADIUS));
+        //        pp.obstacles.add(new RandomObstacle(new Vect(2, 2), ROBOT_RADIUS));
+        //        pp.obstacles.add(new RandomObstacle(new Vect(4, 2), ROBOT_RADIUS));
+        //        pp.obstacles.add(new RandomObstacle(new Vect(3, 3), ROBOT_RADIUS));
+        //        pp.obstacles.add(new RandomObstacle(new Vect(5, 3), ROBOT_RADIUS));
 
+        pp.obstacles.add(new ConstVelocityObstacle(new Vect(4, 0), new Vect(-1, 1), ROBOT_RADIUS));
+        pp.obstacles.add(new ConstVelocityObstacle(new Vect(4, 1), new Vect(-0.6, 0.6), ROBOT_RADIUS));
+        pp.obstacles.add(new ConstVelocityObstacle(new Vect(6, 2.1), new Vect(-1, 0), ROBOT_RADIUS));
+        pp.obstacles.add(new ConstVelocityObstacle(new Vect(6, 2.5), new Vect(-0.75, 0), ROBOT_RADIUS));
+        pp.obstacles.add(new ConstVelocityObstacle(new Vect(6, 2.9), new Vect(-0.5, 0), ROBOT_RADIUS));
+        pp.obstacles.add(new ConstVelocityObstacle(new Vect(0, 1), new Vect(0.78, 0), ROBOT_RADIUS));
+        pp.obstacles.add(new ConstVelocityObstacle(new Vect(3.5, 2.7), new Vect(0, 0), ROBOT_RADIUS));
+
+
+        pp.getPath(new Vect(1, 3), new Vect(5, 1), ROBOT_RADIUS);
+        System.out.println("done");
+        
         frame.add(pp);
         frame.setSize((int)(1827. / 300 * SCALING_FACTOR), (int)(1270. / 300 * SCALING_FACTOR));
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         try {
-            Thread.sleep(15000);
+            Thread.sleep(1000);
         } catch (InterruptedException e1) {
             e1.printStackTrace();
         }
         while (true) {
-            pp.run(new Vect(1, 3), new Vect(5, 1), ROBOT_RADIUS);
-            pp.run(new Vect(5, 1), new Vect(1, 3), ROBOT_RADIUS);
+            pp.run(new Vect(1, 3.5), new Vect(5, 1), ROBOT_RADIUS);
+            pp.run(new Vect(5, 1), new Vect(1, 3.5), ROBOT_RADIUS);
         }
     }
 
@@ -76,8 +88,8 @@ public class DynamicPathPlanner extends JPanel {
         robots = new ArrayList<Obstacle>();
     }
 
-    public List<Node> getPath(Vect start, Vect goal, double robotRadius) {       
-        Double TIMEOUT = 0.1;
+    public List<Node> getPath(Vect start, Vect goal, double robotRadius) {     
+        Double TIMEOUT = 1.0;
         long initialTime = System.nanoTime();
         PriorityQueue<Node> open = new PriorityQueue<Node>(new Comparator<Node>(){
             public int compare(Node n1, Node n2) {
@@ -87,22 +99,22 @@ public class DynamicPathPlanner extends JPanel {
         });
         double totalTime = System.nanoTime();
         Set<Node> expanded = new HashSet<Node>();
-        Double[] initialSafeInterval = getSafeIntervals(start, robotRadius).get(0);
+        Double[] initialSafeInterval = getSafeIntervals(start, robotRadius).get(0); // TODO: MAKE SURE DOESN'T THROW EXCEPTION!
         open.add(new Node(start, initialSafeInterval, 0));
 
         while (!open.isEmpty()) {
             if (System.nanoTime() - initialTime > 1000000000 * TIMEOUT)
                 return new ArrayList<Node>();
             Node next = open.poll();
-            if (equals(next.position, goal)) {    
-                                System.out.println("Took " + (System.nanoTime() - totalTime)/1000000000 + "s");
-                                System.out.println("Expanded " + expanded.size() + " nodes");
+            if (equals(next.position, goal)) {
                 List<Node> path = new ArrayList<Node>();
                 while (next != null) {
                     path.add(next);
                     next = next.parent;
                 }
                 Collections.reverse(path);
+                System.out.println("Took " + (System.nanoTime() - totalTime)/1000000000 + "s");
+                System.out.println("Expanded " + expanded.size() + " nodes\nPath length: " + path.size());
                 return path;
             }
             if (!expanded.contains(next)) {
@@ -120,7 +132,7 @@ public class DynamicPathPlanner extends JPanel {
     }
 
     public double heuristic(Vect point, Vect goal) {
-        return point.minus(goal).length() / ROBOT_VELOCITY;
+        return 1.2 * point.minus(goal).length() / ROBOT_VELOCITY;
     }
 
     public static boolean equals(Vect v1, Vect v2) {
@@ -137,7 +149,7 @@ public class DynamicPathPlanner extends JPanel {
         List<Vect> motions = new ArrayList<Vect>();
         for (double x = -1.0; x <= 1.0; x+=0.5)
             for (double y = -1.0; y <= 1.0; y+=0.5)
-                if ((new Vect(x, y).length() >= 1))
+                if (x == -1 || x == 1 || y == -1 || y == 1)
                     motions.add(new Vect(x*GRID_STEP_SIZE, y*GRID_STEP_SIZE));
 
         for (Vect m : motions) {
@@ -257,10 +269,22 @@ public class DynamicPathPlanner extends JPanel {
     public void updateObstaclePositions(double time) {
         for (Obstacle obs : obstacles) {
             obs.updatePosition(time);
-            if (obs.getPosition().x() < MIN_X + obs.getRadius() || obs.getPosition().x() > MAX_X - obs.getRadius())
+            if (obs.getPosition().x() < MIN_X + obs.getRadius()) {
                 obs.setVelocity(new Vect(-obs.getVelocity().x(), obs.getVelocity().y()));
-            if (obs.getPosition().y() < MIN_Y  + obs.getRadius()|| obs.getPosition().y() > MAX_Y - obs.getRadius())
+                obs.setPosition(new Vect(MIN_X + obs.getRadius(), obs.getPosition().y()));
+            }
+            if (obs.getPosition().x() > MAX_X - obs.getRadius()) {
+                obs.setVelocity(new Vect(-obs.getVelocity().x(), obs.getVelocity().y()));
+                obs.setPosition(new Vect(MAX_X - obs.getRadius(), obs.getPosition().y()));
+            }
+            if (obs.getPosition().y() < MIN_Y + obs.getRadius()) {
                 obs.setVelocity(new Vect(obs.getVelocity().x(), -obs.getVelocity().y()));
+                obs.setPosition(new Vect(obs.getPosition().x(), MIN_Y + obs.getRadius()));
+            }
+            if (obs.getPosition().y() > MAX_Y - obs.getRadius()) {
+                obs.setVelocity(new Vect(obs.getVelocity().x(), -obs.getVelocity().y()));
+                obs.setPosition(new Vect(obs.getPosition().x(), MAX_Y - obs.getRadius()));
+            }
         }
     }
 
@@ -274,7 +298,7 @@ public class DynamicPathPlanner extends JPanel {
         //        for (double x = 0; x <= FIELD_LENGTH+0.01; x += GRID_STEP_SIZE)
         //            for (double y = 0; y <= FIELD_WIDTH+0.01; y += GRID_STEP_SIZE)
         //                g2d.fillOval((int)(x*SCALING_FACTOR)+offset, (int)(y*SCALING_FACTOR)+offset, 5, 5);
-
+        
 
         for (Obstacle obs : obstacles) {
             g.setColor(Color.DARK_GRAY);
