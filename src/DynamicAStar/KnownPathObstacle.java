@@ -1,14 +1,14 @@
+package DynamicAStar;
 import java.util.ArrayList;
 import java.util.List;
 
 import physics.Vect;
 
 
-public class KnownPathObstacle {
+public class KnownPathObstacle implements Obstacle {
 
     public double radius;
     public List<Node> path;
-    private final double AVOID_RADIUS = 0.05;
 
     public KnownPathObstacle(List<Node> path, double radius) {
         this.radius = radius;
@@ -16,6 +16,7 @@ public class KnownPathObstacle {
     }
 
     public List<Double[]> getCollisionIntervals(Vect point, double robotRadius) {
+        robotRadius += AVOID_RADIUS;
         List<Double[]> collisionIntervals = new ArrayList<Double[]>();
         
         for (int i = 0; i < path.size() - 1; i++) {
@@ -43,5 +44,35 @@ public class KnownPathObstacle {
             }
         }
         return collisionIntervals;
+    }
+
+    @Override
+    public void updatePosition(double time) {
+        
+    }
+
+    @Override
+    public double getRadius() {
+        return this.radius;
+    }
+
+    @Override
+    public Vect getPosition() {
+        return null;
+    }
+
+    @Override
+    public Vect getVelocity() {
+        return null;
+    }
+
+    @Override
+    public void setPosition(Vect newPosition) {
+        
+    }
+
+    @Override
+    public void setVelocity(Vect newVelocity) {
+        
     }
 }

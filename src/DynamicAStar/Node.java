@@ -36,7 +36,7 @@ public class Node {
     
     @Override
     public String toString() {
-        return position.toString() + ", [" + safeInterval[0] + "," + safeInterval[1] + "], time=" + time;
-//        return position.toString() + ", time=" + time;
+//        return position.toString() + ", [" + safeInterval[0] + "," + safeInterval[1] + "], time=" + time;
+        return position.toString() + ", time=" + time;
     }
 }

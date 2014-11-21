@@ -41,15 +41,15 @@ public class PathPlanner extends JPanel {
         PathPlanner pp = new PathPlanner();
 
         //        Situation 1
-                pp.obstacles.add(new ConstVelocityObstacle(new Vect(1, 3), new Vect(0, 0.3), ROBOT_RADIUS));
-                pp.obstacles.add(new ConstVelocityObstacle(new Vect(4, 0), new Vect(-1, 1), ROBOT_RADIUS));
-                pp.obstacles.add(new ConstVelocityObstacle(new Vect(4, 1), new Vect(-0.6, 0.6), ROBOT_RADIUS));
-                pp.obstacles.add(new ConstVelocityObstacle(new Vect(6, 2.1), new Vect(-1, 0), ROBOT_RADIUS));
-                pp.obstacles.add(new ConstVelocityObstacle(new Vect(6, 2.5), new Vect(-0.75, 0), ROBOT_RADIUS));
-                pp.obstacles.add(new ConstVelocityObstacle(new Vect(6, 2.9), new Vect(-0.5, 0), ROBOT_RADIUS));
-                pp.obstacles.add(new ConstVelocityObstacle(new Vect(0, 1), new Vect(0.78, 0), ROBOT_RADIUS));
-                pp.obstacles.add(new ConstVelocityObstacle(new Vect(3.5, 2.7), new Vect(0, 0), ROBOT_RADIUS));
-                List<Node> path = pp.getPath(new Vect(0.2, 3.8), new Vect(5.6, 0.2), ROBOT_RADIUS);
+//        pp.obstacles.add(new ConstVelocityObstacle(new Vect(1, 3), new Vect(0, 0.3), ROBOT_RADIUS));
+//        pp.obstacles.add(new ConstVelocityObstacle(new Vect(4, 0), new Vect(-1, 1), ROBOT_RADIUS));
+//        pp.obstacles.add(new ConstVelocityObstacle(new Vect(4, 1), new Vect(-0.6, 0.6), ROBOT_RADIUS));
+//        pp.obstacles.add(new ConstVelocityObstacle(new Vect(6, 2.1), new Vect(-1, 0), ROBOT_RADIUS));
+//        pp.obstacles.add(new ConstVelocityObstacle(new Vect(6, 2.5), new Vect(-0.75, 0), ROBOT_RADIUS));
+//        pp.obstacles.add(new ConstVelocityObstacle(new Vect(6, 2.9), new Vect(-0.5, 0), ROBOT_RADIUS));
+//        pp.obstacles.add(new ConstVelocityObstacle(new Vect(0, 1), new Vect(0.78, 0), ROBOT_RADIUS));
+//        pp.obstacles.add(new ConstVelocityObstacle(new Vect(3.5, 2.7), new Vect(0, 0), ROBOT_RADIUS));
+//        List<Node> path = pp.getPath(new Vect(0.2, 3.8), new Vect(5.6, 0.2), ROBOT_RADIUS);
 
         //        Situation 2
         //        double obstacleSpeed = 0.7;
@@ -91,11 +91,11 @@ public class PathPlanner extends JPanel {
 //        List<Node> path = pp.getPath(new Vect(1, 2), new Vect(5, 2), ROBOT_RADIUS);
 
 
-        frame.add(pp);
-        frame.setSize((int)(1800. / 300 * SCALING_FACTOR), (int)(1400. / 300 * SCALING_FACTOR));
-        frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        pp.run(path, ROBOT_RADIUS);
+//        frame.add(pp);
+//        frame.setSize((int)(1800. / 300 * SCALING_FACTOR), (int)(1400. / 300 * SCALING_FACTOR));
+//        frame.setVisible(true);
+//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        pp.run(path, ROBOT_RADIUS);
     }
 
     /* 
@@ -166,8 +166,8 @@ public class PathPlanner extends JPanel {
     public List<Node> getSuccessors(Node node, double robotRadius) {
         List<Node> successors = new ArrayList<Node>();
         List<Vect> motions = new ArrayList<Vect>();
-        for (double x = -1.0; x <= 1.0; x+=1)
-            for (double y = -1.0; y <= 1.0; y+=1)
+        for (double x = -1.0; x <= 1.0; x+=0.5)
+            for (double y = -1.0; y <= 1.0; y+=0.5)
                 if ((new Vect(x, y).length() >= 1))
                     motions.add(new Vect(x*GRID_STEP_SIZE, y*GRID_STEP_SIZE));
 

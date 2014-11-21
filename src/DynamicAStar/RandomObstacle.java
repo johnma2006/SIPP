@@ -17,7 +17,7 @@ public class RandomObstacle implements Obstacle {
     public RandomObstacle(Vect position, double radius) {
         this.radius = radius;
         this.position = position;
-        this.velocity = new Vect(Math.random() * MAX_VELOCITY * 2 - MAX_VELOCITY, Math.random() * MAX_VELOCITY * 2 - MAX_VELOCITY);
+        this.velocity = getRandomVelocity();
         this.timeUntilChangeVelocity = Math.random() * MAX_TIME_TILL_CHANGE_VELOCITY;
     }
 
@@ -46,9 +46,14 @@ public class RandomObstacle implements Obstacle {
         this.position = this.position.plus(this.velocity.times(time));
         timeUntilChangeVelocity -= time;
         if (timeUntilChangeVelocity < 0) {
-            this.velocity = new Vect(Math.random() * MAX_VELOCITY * 2 - MAX_VELOCITY, Math.random() * MAX_VELOCITY * 2 - MAX_VELOCITY);
+            this.velocity = getRandomVelocity();
             this.timeUntilChangeVelocity = Math.random() * MAX_TIME_TILL_CHANGE_VELOCITY;
         }
+    }
+    public Vect getRandomVelocity() {
+        double magnitude = Math.random() * MAX_VELOCITY;
+        double angle = Math.random() * 2 * Math.PI;
+        return new Vect(Math.cos(angle), Math.sin(angle)).times(magnitude);
     }
     
     @Override

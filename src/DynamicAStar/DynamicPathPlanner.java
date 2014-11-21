@@ -23,6 +23,7 @@ public class DynamicPathPlanner extends JPanel {
     private final static double ROBOT_RADIUS = 0.2;
     private final static double ROBOT_VELOCITY = 1; // 1 meter per second
     private final static double GRID_STEP_SIZE = 0.1; // 0.1 meter
+    private final static double OBSTACLE_LOOKAROUND_RADIUS = 3.0; // If an obstacle is > 3.0m away and going to be in the path, ignore it
 
     private final static double FIELD_LENGTH = 6;
     private final static double FIELD_WIDTH = 4;
@@ -32,48 +33,64 @@ public class DynamicPathPlanner extends JPanel {
     private final static double MIN_Y = 0;
     private final static double MAX_Y = FIELD_WIDTH;
 
+    // TODO: if goal is inside slow moving robot, calculations are slow
 
     public final List<Obstacle> obstacles;
 
     public static void main(String[] args) {
 
         JFrame frame = new JFrame("Dynamic Path Planner");
-
         DynamicPathPlanner pp = new DynamicPathPlanner();
-
-        //        pp.obstacles.add(new RandomObstacle(new Vect(1, 1), ROBOT_RADIUS));
-        //        pp.obstacles.add(new RandomObstacle(new Vect(3, 1), ROBOT_RADIUS));
-        //        pp.obstacles.add(new RandomObstacle(new Vect(5, 1), ROBOT_RADIUS));
-        //        pp.obstacles.add(new RandomObstacle(new Vect(2, 2), ROBOT_RADIUS));
-        //        pp.obstacles.add(new RandomObstacle(new Vect(4, 2), ROBOT_RADIUS));
-        //        pp.obstacles.add(new RandomObstacle(new Vect(3, 3), ROBOT_RADIUS));
-        //        pp.obstacles.add(new RandomObstacle(new Vect(5, 3), ROBOT_RADIUS));
-
-        pp.obstacles.add(new ConstVelocityObstacle(new Vect(4, 0), new Vect(-1, 1), ROBOT_RADIUS));
-        pp.obstacles.add(new ConstVelocityObstacle(new Vect(4, 1), new Vect(-0.6, 0.6), ROBOT_RADIUS));
-        pp.obstacles.add(new ConstVelocityObstacle(new Vect(6, 2.1), new Vect(-1, 0), ROBOT_RADIUS));
-        pp.obstacles.add(new ConstVelocityObstacle(new Vect(6, 2.5), new Vect(-0.75, 0), ROBOT_RADIUS));
-        pp.obstacles.add(new ConstVelocityObstacle(new Vect(6, 2.9), new Vect(-0.5, 0), ROBOT_RADIUS));
-        pp.obstacles.add(new ConstVelocityObstacle(new Vect(0, 1), new Vect(0.78, 0), ROBOT_RADIUS));
-        pp.obstacles.add(new ConstVelocityObstacle(new Vect(3.5, 2.7), new Vect(0, 0), ROBOT_RADIUS));
-
-
-        pp.getPath(new Vect(1, 3), new Vect(5, 1), ROBOT_RADIUS);
-        System.out.println("done");
-        
         frame.add(pp);
         frame.setSize((int)(1827. / 300 * SCALING_FACTOR), (int)(1270. / 300 * SCALING_FACTOR));
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+
+//        pp.obstacles.add(new RandomObstacle(new Vect(1, 1), ROBOT_RADIUS));
+//        pp.obstacles.add(new RandomObstacle(new Vect(3, 1), ROBOT_RADIUS));
+//        pp.obstacles.add(new RandomObstacle(new Vect(5, 1), ROBOT_RADIUS));
+//        pp.obstacles.add(new RandomObstacle(new Vect(2, 2), ROBOT_RADIUS));
+//        pp.obstacles.add(new RandomObstacle(new Vect(4, 2), ROBOT_RADIUS));
+//        pp.obstacles.add(new RandomObstacle(new Vect(3, 3), ROBOT_RADIUS));
+//        pp.obstacles.add(new RandomObstacle(new Vect(5, 3), ROBOT_RADIUS));
+
+//        pp.obstacles.add(new ConstVelocityObstacle(new Vect(4, 0), new Vect(-0.7, 0.7), ROBOT_RADIUS));
+//        pp.obstacles.add(new ConstVelocityObstacle(new Vect(4, 1), new Vect(-0.8, 0.3), ROBOT_RADIUS));
+//        pp.obstacles.add(new ConstVelocityObstacle(new Vect(6, 2.1), new Vect(-1, 0), ROBOT_RADIUS));
+//        pp.obstacles.add(new ConstVelocityObstacle(new Vect(6, 2.5), new Vect(-0.75, -0.1), ROBOT_RADIUS));
+//        pp.obstacles.add(new ConstVelocityObstacle(new Vect(6, 2.9), new Vect(-0.5, -0.2), ROBOT_RADIUS));
+//        pp.obstacles.add(new ConstVelocityObstacle(new Vect(0, 1), new Vect(0.78, 0), ROBOT_RADIUS));
+//        pp.obstacles.add(new ConstVelocityObstacle(new Vect(3.5, 2.7), new Vect(-0.1, -0.1), ROBOT_RADIUS));
+
+
+        List<Vect> waypoints = new ArrayList<>();
+        waypoints.add(new Vect(1, 3.2));
+        waypoints.add(new Vect(5, 0.2));
+        waypoints.add(new Vect(1, 3.2));
+       
+        List<Vect> waypoints3 = new ArrayList<>();
+        waypoints3.add(new Vect(3, 3.6));
+        waypoints3.add(new Vect(3, 0.8));
+        waypoints3.add(new Vect(3, 3.6));
+        
+        List<Vect> waypoints2 = new ArrayList<>();
+        waypoints2.add(new Vect(5, 3.2));
+        waypoints2.add(new Vect(1, 0.2));
+        waypoints2.add(new Vect(5, 3.2));
+       
+        
+        List<List<Vect>> allWaypoints = new ArrayList<List<Vect>>();
+        allWaypoints.add(waypoints);
+        allWaypoints.add(waypoints2);
+        allWaypoints.add(waypoints3);
+        
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e1) {
             e1.printStackTrace();
         }
-        while (true) {
-            pp.run(new Vect(1, 3.5), new Vect(5, 1), ROBOT_RADIUS);
-            pp.run(new Vect(5, 1), new Vect(1, 3.5), ROBOT_RADIUS);
-        }
+        pp.run(allWaypoints, ROBOT_RADIUS);
     }
 
     /* 
@@ -113,8 +130,8 @@ public class DynamicPathPlanner extends JPanel {
                     next = next.parent;
                 }
                 Collections.reverse(path);
-                System.out.println("Took " + (System.nanoTime() - totalTime)/1000000000 + "s");
-                System.out.println("Expanded " + expanded.size() + " nodes\nPath length: " + path.size());
+//                System.out.println("Took " + (System.nanoTime() - totalTime)/1000000000 + "s");
+//                System.out.println("Expanded " + expanded.size() + " nodes\nPath length: " + path.size());
                 return path;
             }
             if (!expanded.contains(next)) {
@@ -174,8 +191,14 @@ public class DynamicPathPlanner extends JPanel {
         List<Double[]> safeIntervals = new ArrayList<Double[]>();
 
         List<Double[]> allCollisionIntervals = new ArrayList<Double[]>();
-        for (Obstacle obs : obstacles)
+        for (Obstacle obs : obstacles) {
+            if (obs.getVelocity().length() < 0.1 || obs.getPosition().minus(point).length() < OBSTACLE_LOOKAROUND_RADIUS) // Makes for more stable paths
+                allCollisionIntervals.addAll(obs.getCollisionIntervals(point, robotRadius));
+        }
+        for (List<Node> path : allPaths) {
+            KnownPathObstacle obs = new KnownPathObstacle(path, robotRadius);
             allCollisionIntervals.addAll(obs.getCollisionIntervals(point, robotRadius));
+        }
         Collections.sort(allCollisionIntervals, new Comparator<Double[]>() {
             public int compare(Double[] d1, Double[] d2) {return Double.compare(d1[0], d2[0]);}
         });
@@ -212,58 +235,78 @@ public class DynamicPathPlanner extends JPanel {
 
     /* 
      * ===================================================================================
-     *                                  Drawing functions
+     *                                    Simulator
      * ===================================================================================
      */
 
-    public final List<Obstacle> robots;
-    public List<Node> path = new ArrayList<Node>();
+    public List<Obstacle> robots;
+    
+    public List<List<Node>> allPaths = new ArrayList<List<Node>>();
+    public List<Vect> allGoals = new ArrayList<Vect>();
 
-    public void run(Vect start, Vect goal, double robotRadius) {
-        double time = 0;
+    public void run(List<List<Vect>> allWaypoints, double robotRadius) {
         double TIMESTEP = 1./30;
-        this.path = getPath(start, goal, robotRadius);
-        Vect currentPosition = start;
+        int numRobots = allWaypoints.size();
+        
+        for (List<Vect> waypoints : allWaypoints) {
+            ConstVelocityObstacle robot = new ConstVelocityObstacle(waypoints.remove(0), new Vect(0, 0), robotRadius);
+            robots.add(robot);
+            allGoals.add(waypoints.get(0));
+        }
+        
         double frameTime = System.nanoTime();
         while (true) {
-            updateRobotPositions(this.path, time, robotRadius);
+            allPaths.clear();
+            for (int i = 0; i < numRobots; i++) {
+                List<Node> newPath = getPath(robots.get(i).getPosition(), allGoals.get(i), robotRadius);
+                allPaths.add(newPath);
+            }
+            updateRobotPositions(this.allPaths, TIMESTEP, robotRadius);
             updateObstaclePositions(TIMESTEP);
+            for (int i = 0; i < numRobots; i++) {
+                if (robots.get(i).getPosition().minus(allGoals.get(i)).length() < 0.15) {
+                    if (allWaypoints.get(i).size() > 1) {
+                        allWaypoints.get(i).remove(0);
+                        allGoals.set(i, allWaypoints.get(i).get(0));
+                    }
+                }
+            }
             this.repaint();
-            time = TIMESTEP;
-            if (robots.size() > 0)
-                currentPosition = robots.get(0).getPosition();
-            else
-                if (currentPosition.minus(goal).length() < 0.15)
-                    break;
-            List<Node> newPath = getPath(currentPosition, goal, robotRadius);
-            if (newPath.size() > 0)
-                this.path = newPath;
             while ((System.nanoTime() - frameTime)/1000000000 < TIMESTEP) {}
             frameTime = System.nanoTime();
         }
     }
 
-    public void updateRobotPositions(List<Node> path, double time, double robotRadius) {
-        while (!robots.isEmpty())
-            robots.remove(robots.size()-1);
-        for (int i = 0; i < path.size(); i++) {
-            if (path.get(i).time > time) {
-                double t2 = path.get(i).time;
-                Vect position1 = path.get(i-1).position;
-                Vect position2 = path.get(i).position;
-                Vect position;
-                double travelTime = position2.minus(position1).length() / ROBOT_VELOCITY;
-                if (t2 - travelTime > time)
-                    position = position1;
-                else {
-                    double timeTravelled = time-t2+travelTime;
-                    position = position1.times(travelTime-timeTravelled).plus(position2.times(timeTravelled)).times(1/travelTime);
+    public void updateRobotPositions(List<List<Node>> allPaths, double time, double robotRadius) {
+        List<Obstacle> newRobots = new ArrayList<Obstacle>();
+        for (int p = 0; p < allPaths.size(); p++) {
+            List<Node> path = allPaths.get(p);
+            boolean added = false;
+            for (int i = 0; i < path.size(); i++) {
+                if (path.get(i).time > time) {
+                    double t2 = path.get(i).time;
+                    Vect position1 = path.get(i-1).position;
+                    Vect position2 = path.get(i).position;
+                    Vect position;
+                    double travelTime = position2.minus(position1).length() / ROBOT_VELOCITY;
+                    if (t2 - travelTime > time)
+                        position = position1;
+                    else {
+                        double timeTravelled = time-t2+travelTime;
+                        position = position1.times(travelTime-timeTravelled).plus(position2.times(timeTravelled)).times(1/travelTime);
+                    }
+                    Obstacle robot = new ConstVelocityObstacle(position, new Vect(0, 0), robotRadius);
+                    newRobots.add(robot);
+                    added = true;
+                    break;
                 }
-                Obstacle robot = new ConstVelocityObstacle(position, new Vect(0, 0), robotRadius);
-                robots.add(robot);
-                break;
+            }
+            if (!added){
+                Obstacle robot = new ConstVelocityObstacle(robots.get(p).getPosition(), new Vect(0, 0), robotRadius);
+                newRobots.add(robot);
             }
         }
+        this.robots = newRobots;
     }
 
     public void updateObstaclePositions(double time) {
@@ -306,18 +349,44 @@ public class DynamicPathPlanner extends JPanel {
                     (int)(2*obs.getRadius()*SCALING_FACTOR), (int)(2*obs.getRadius()*SCALING_FACTOR));
         }
 
-        for (Obstacle obs : robots) {
-            g.setColor(Color.LIGHT_GRAY);
-            g2d.fillOval((int)((obs.getPosition().x()-obs.getRadius())*SCALING_FACTOR)+offset, (int)((obs.getPosition().y()-obs.getRadius())*SCALING_FACTOR)+offset, 
-                    (int)(2*obs.getRadius()*SCALING_FACTOR), (int)(2*obs.getRadius()*SCALING_FACTOR));
+//        for (int i = 0; i < path.size() - 1; i++) {
+//            g.setColor(Color.blue);
+//            g2d.drawLine((int)(path.get(i).position.x()*SCALING_FACTOR)+offset, 
+//                    (int)(path.get(i).position.y()*SCALING_FACTOR)+offset, 
+        //                    (int)(path.get(i+1).position.x()*SCALING_FACTOR)+offset, 
+        //                    (int)(path.get(i+1).position.y()*SCALING_FACTOR)+offset); 
+        //        }
+
+        for (int i = 0; i < robots.size(); i++) {
+            if (i == 0)
+                g.setColor(new Color(34, 63, 117));
+            else if (i == 1)
+                g.setColor(new Color(64, 89, 51));
+            else if (i == 2)
+                g.setColor(new Color(94, 33, 33));
+            else if (i == 3)
+                g.setColor(new Color(117, 97, 0));
+            else
+                g.setColor(new Color(120, 49, 95));
+            
+            Obstacle robot = robots.get(i);
+            g2d.fillOval((int)((robot.getPosition().x()-robot.getRadius())*SCALING_FACTOR)+offset, (int)((robot.getPosition().y()-robot.getRadius())*SCALING_FACTOR)+offset, 
+                    (int)(2*robot.getRadius()*SCALING_FACTOR), (int)(2*robot.getRadius()*SCALING_FACTOR));
         }
 
-        for (int i = 0; i < path.size() - 1; i++) {
-            g.setColor(Color.blue);
-            g2d.drawLine((int)(path.get(i).position.x()*SCALING_FACTOR)+offset, 
-                    (int)(path.get(i).position.y()*SCALING_FACTOR)+offset, 
-                    (int)(path.get(i+1).position.x()*SCALING_FACTOR)+offset, 
-                    (int)(path.get(i+1).position.y()*SCALING_FACTOR)+offset); 
+        for (int i = 0; i < allGoals.size(); i++) {
+            if (i == 0)
+                g.setColor(new Color(74, 134, 247));
+            else if (i == 1)
+                g.setColor(new Color(123, 173, 99));
+            else if (i == 2)
+                g.setColor(new Color(188, 66, 66));
+            else if (i == 3)
+                g.setColor(new Color(256, 216, 0));
+            else
+                g.setColor(new Color(255, 124, 137));
+            
+            g2d.fillOval((int)(allGoals.get(i).x()*SCALING_FACTOR)+offset, (int)(allGoals.get(i).y()*SCALING_FACTOR)+offset, 30, 30);
         }
     }
 }
