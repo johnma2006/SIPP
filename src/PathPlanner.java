@@ -91,11 +91,11 @@ public class PathPlanner extends JPanel {
 //        List<Node> path = pp.getPath(new Vect(1, 2), new Vect(5, 2), ROBOT_RADIUS);
 
 
-//        frame.add(pp);
-//        frame.setSize((int)(1800. / 300 * SCALING_FACTOR), (int)(1400. / 300 * SCALING_FACTOR));
-//        frame.setVisible(true);
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        pp.run(path, ROBOT_RADIUS);
+        frame.add(pp);
+        frame.setSize((int)(1800. / 300 * SCALING_FACTOR), (int)(1400. / 300 * SCALING_FACTOR));
+        frame.setVisible(true);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        pp.run(path, ROBOT_RADIUS);
     }
 
     /* 
