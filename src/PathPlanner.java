@@ -35,21 +35,21 @@ public class PathPlanner extends JPanel {
     public final List<ConstVelocityObstacle> obstacles;
 
     public static void main(String[] args) {
-
+        // This class is (kinda) outdated! Look at DynamicPathPlanner.java instead
         JFrame frame = new JFrame("Path Planner");
 
         PathPlanner pp = new PathPlanner();
 
         //        Situation 1
-//        pp.obstacles.add(new ConstVelocityObstacle(new Vect(1, 3), new Vect(0, 0.3), ROBOT_RADIUS));
-//        pp.obstacles.add(new ConstVelocityObstacle(new Vect(4, 0), new Vect(-1, 1), ROBOT_RADIUS));
-//        pp.obstacles.add(new ConstVelocityObstacle(new Vect(4, 1), new Vect(-0.6, 0.6), ROBOT_RADIUS));
-//        pp.obstacles.add(new ConstVelocityObstacle(new Vect(6, 2.1), new Vect(-1, 0), ROBOT_RADIUS));
-//        pp.obstacles.add(new ConstVelocityObstacle(new Vect(6, 2.5), new Vect(-0.75, 0), ROBOT_RADIUS));
-//        pp.obstacles.add(new ConstVelocityObstacle(new Vect(6, 2.9), new Vect(-0.5, 0), ROBOT_RADIUS));
-//        pp.obstacles.add(new ConstVelocityObstacle(new Vect(0, 1), new Vect(0.78, 0), ROBOT_RADIUS));
-//        pp.obstacles.add(new ConstVelocityObstacle(new Vect(3.5, 2.7), new Vect(0, 0), ROBOT_RADIUS));
-//        List<Node> path = pp.getPath(new Vect(0.2, 3.8), new Vect(5.6, 0.2), ROBOT_RADIUS);
+        pp.obstacles.add(new ConstVelocityObstacle(new Vect(1, 3), new Vect(0, 0.3), ROBOT_RADIUS));
+        pp.obstacles.add(new ConstVelocityObstacle(new Vect(4, 0), new Vect(-1, 1), ROBOT_RADIUS));
+        pp.obstacles.add(new ConstVelocityObstacle(new Vect(4, 1), new Vect(-0.6, 0.6), ROBOT_RADIUS));
+        pp.obstacles.add(new ConstVelocityObstacle(new Vect(6, 2.1), new Vect(-1, 0), ROBOT_RADIUS));
+        pp.obstacles.add(new ConstVelocityObstacle(new Vect(6, 2.5), new Vect(-0.75, 0), ROBOT_RADIUS));
+        pp.obstacles.add(new ConstVelocityObstacle(new Vect(6, 2.9), new Vect(-0.5, 0), ROBOT_RADIUS));
+        pp.obstacles.add(new ConstVelocityObstacle(new Vect(0, 1), new Vect(0.78, 0), ROBOT_RADIUS));
+        pp.obstacles.add(new ConstVelocityObstacle(new Vect(3.5, 2.7), new Vect(0, 0), ROBOT_RADIUS));
+        List<Node> path = pp.getPath(new Vect(0.2, 3.8), new Vect(5.6, 0.2), ROBOT_RADIUS);
 
         //        Situation 2
         //        double obstacleSpeed = 0.7;

@@ -43,14 +43,14 @@ public class KnownPathObstacle implements Obstacle {
         robotRadius += AVOID_RADIUS;
         for (int i = 0; i < path.size() - 1; i++) {
             Vect position = path.get(i).position;
-            Vect velocity = path.get(i+1).position.minus(path.get(i).position).times(1.0 / (path.get(i+1).time - path.get(i).time));
+            Vect velocity = path.get(i+1).position.minus(path.get(i).position).unitSize();
             Vect relativePoint = position.minus(robotOrigin);
             Vect relativeVelocity = velocity.minus(robotVelocity);
             Double[] collisionInterval = Obstacle.getTimeIntersectCircleAroundOrigin(relativePoint, relativeVelocity, robotRadius+radius);
             if (collisionInterval != null) {
                 double t1 = Math.max(collisionInterval[0] + path.get(i).time, path.get(i).time);
                 double t2 = Math.min(collisionInterval[1] + path.get(i).time, path.get(i+1).time);
-                if (t2 > t1 && t1 <= endMovingTime && t2 >= startMovingTime)
+                if (t2 >= t1 && t1 <= endMovingTime && t2 >= startMovingTime)
                     return true;
             }
         }

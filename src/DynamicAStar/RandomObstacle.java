@@ -11,7 +11,7 @@ public class RandomObstacle implements Obstacle {
     public Vect position;
     public Vect velocity;
     public double timeUntilChangeVelocity;
-    private final double MAX_VELOCITY = 2;
+    private final double MAX_VELOCITY = 1;
     private final double MAX_TIME_TILL_CHANGE_VELOCITY = 1.5;
 
     public RandomObstacle(Vect position, double radius) {
